@@ -1,4 +1,8 @@
 package com.springMVC.mvc.repository;
 
-public interface EventRepository {
+import com.springMVC.mvc.models.Event;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface EventRepository extends JpaRepository<Event, Long> {
+
 }
