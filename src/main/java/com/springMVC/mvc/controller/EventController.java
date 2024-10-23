@@ -4,9 +4,11 @@ import com.springMVC.mvc.dto.ClubDTO;
 import com.springMVC.mvc.dto.EventDTO;
 import com.springMVC.mvc.models.Event;
 import com.springMVC.mvc.service.EventService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +27,7 @@ public class EventController {
     }
 
     @GetMapping("/events/{clubId}/new")
-    public String createEventFrom(@PathVariable("clubId") Long clubId, Model model) {
+    public String createEventForm(@PathVariable("clubId") Long clubId, Model model) {
         Event event = new Event();
         model.addAttribute("clubId", clubId);
         model.addAttribute("event", event);
@@ -33,7 +35,13 @@ public class EventController {
     }
 
     @PostMapping("/events/{clubId}")
-    public String createEvent(@PathVariable("clubId") Long clubId, @ModelAttribute("event") EventDTO eventDTO, Model model) {
+    public String createEvent(@PathVariable("clubId") Long clubId, @ModelAttribute("event") EventDTO eventDTO,
+                              Model model, BindingResult result) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("event", eventDTO);
+            return "clubs-create";
+        }
         eventService.createEvent(clubId, eventDTO);
         return "redirect:/clubs/" + clubId;
     }
@@ -57,5 +65,20 @@ public class EventController {
         EventDTO event = eventService.findByEventId(eventId);
         model.addAttribute("event", event);
         return "events-edit";
+    }
+
+    @PostMapping("/events/{eventId}/edit")
+    public String updatedEvent(@PathVariable("eventId") Long eventId,
+                               @Valid @ModelAttribute("event") EventDTO event,
+                               BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("event", event);
+            return "events-edit";
+        }
+        EventDTO eventDTO = eventService.findByEventId(eventId);
+        event.setId(eventId);
+        event.setClub(eventDTO.getClub());
+        eventService.updateEvent(event);
+        return "redirect:/events";
     }
 }

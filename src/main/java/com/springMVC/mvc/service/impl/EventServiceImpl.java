@@ -1,5 +1,6 @@
 package com.springMVC.mvc.service.impl;
 
+import com.springMVC.mvc.dto.ClubDTO;
 import com.springMVC.mvc.dto.EventDTO;
 import com.springMVC.mvc.models.Club;
 import com.springMVC.mvc.models.Event;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.springMVC.mvc.mapper.ClubMapper.mapToClub;
 import static com.springMVC.mvc.mapper.EventMapper.mapToEvent;
 import static com.springMVC.mvc.mapper.EventMapper.mapToEventDto;
 
@@ -47,6 +49,12 @@ public class EventServiceImpl implements EventService {
     public EventDTO findByEventId(Long eventID) {
         Event event = eventRepository.findById(eventID).get();
         return mapToEventDto(event);
+    }
+
+    @Override
+    public void updateEvent(EventDTO eventDTO) {
+        Event event = mapToEvent(eventDTO);
+        eventRepository.save(event);
     }
 
 
