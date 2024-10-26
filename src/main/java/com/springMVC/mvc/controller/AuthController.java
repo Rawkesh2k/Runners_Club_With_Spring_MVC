@@ -30,7 +30,9 @@ public class AuthController {
     }
 
     @PostMapping("/register/save")
-    public String register(@Valid @ModelAttribute("user") RegistrationDTO user, BindingResult result, Model model) {
+    public String register(@Valid @ModelAttribute("user") RegistrationDTO user,
+                           BindingResult result,
+                           Model model) {
         UserEntity existingUsersEmail = userService.findByEmail(user.getEmail());
         if (existingUsersEmail != null
                 && existingUsersEmail.getEmail() != null
@@ -42,7 +44,7 @@ public class AuthController {
         if (existingUsername != null
                 && existingUsername.getUsername() != null
                 && !existingUsername.getUsername().isEmpty()) {
-            result.rejectValue("email", "User exists with the email/username");
+            result.rejectValue("user", "User exists with the email/username");
         }
 
         if (result.hasErrors()) {
