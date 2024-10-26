@@ -22,6 +22,11 @@ public class AuthController {
         this.userService = userService;
     }
 
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login";
+    }
+
     @GetMapping("/register")
     public String getRegisterForm(Model model) {
         RegistrationDTO user = new RegistrationDTO();
@@ -37,14 +42,14 @@ public class AuthController {
         if (existingUsersEmail != null
                 && existingUsersEmail.getEmail() != null
                 && !existingUsersEmail.getEmail().isEmpty()) {
-            result.rejectValue("email", "User exists with the email/username");
+            return "redirect:/register?fail";
         }
 
         UserEntity existingUsername = userService.findByUsername(user.getUsername());
         if (existingUsername != null
                 && existingUsername.getUsername() != null
                 && !existingUsername.getUsername().isEmpty()) {
-            result.rejectValue("user", "User exists with the email/username");
+            return "redirect:/register?fail";
         }
 
         if (result.hasErrors()) {
